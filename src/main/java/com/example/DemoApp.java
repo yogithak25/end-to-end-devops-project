@@ -19,32 +19,43 @@ public class DemoApp {
     public static String getStartupMessage() {
         return STARTUP_MESSAGE;
     }
-    public static String getHtmlResponse() {
-        return "<h1>End-to-End DevOps CI/CD Pipeline Deployment Successful</h1>";
+
+    public static byte[] loadHtml() throws Exception {
+
+        InputStream htmlStream =
+                DemoApp.class.getClassLoader().getResourceAsStream("index.html");
+
+        return htmlStream.readAllBytes();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void startServer(int port) throws Exception {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         server.createContext("/", exchange -> {
 
-            InputStream htmlStream =
-                    DemoApp.class.getClassLoader().getResourceAsStream("index.html");
-
-            byte[] response = htmlStream.readAllBytes();
+            byte[] response = loadHtml();
 
             exchange.getResponseHeaders().add("Content-Type", "text/html");
+
             exchange.sendResponseHeaders(200, response.length);
 
             OutputStream os = exchange.getResponseBody();
             os.write(response);
             os.close();
+
         });
 
         server.setExecutor(null);
         server.start();
 
-        LOGGER.info("HTTP Server started on port 9090");
+        LOGGER.info("HTTP Server started on port {}", port);
     }
+
+    public static void main(String[] args) throws Exception {
+
+        startServer(9090);
+
+    }
+
 }
