@@ -15,13 +15,35 @@ public class DemoAppTest {
 
     }
     @Test
+    public void testStartupMessageNotNull() {
+
+        assertNotNull(DemoApp.getStartupMessage());
+    }
+
+    @Test
+    public void testGenerateHtmlContainsMessage() {
+
+        String html = DemoApp.generateHtml();
+
+        assertTrue(html.contains("End-to-End DevOps CI/CD Pipeline Deployment Successful"));
+    }
+
+    @Test
+    public void testGenerateHtmlStructure() {
+
+        String html = DemoApp.generateHtml();
+
+        assertTrue(html.startsWith("<html>"));
+        assertTrue(html.contains("<h1>"));
+    }
+
+    @Test
     public void testLoadHtml() throws Exception {
 
-        byte[] html = DemoApp.loadHtml();
+        byte[] htmlBytes = DemoApp.loadHtml();
 
-        assertNotNull(html);
-        assertTrue(html.length > 0);
-
+        assertNotNull(htmlBytes);
+        assertTrue(htmlBytes.length > 0);
     }
 
 }
