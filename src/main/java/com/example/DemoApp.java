@@ -34,15 +34,27 @@ public class DemoApp {
 
         server.createContext("/", exchange -> {
 
-            byte[] response = loadHtml();
+            try {
 
-            exchange.getResponseHeaders().add("Content-Type", "text/html");
+                byte[] response = loadHtml();
 
-            exchange.sendResponseHeaders(200, response.length);
+                exchange.getResponseHeaders().add("Content-Type", "text/html");
+                exchange.sendResponseHeaders(200, response.length);
 
-            OutputStream os = exchange.getResponseBody();
-            os.write(response);
-            os.close();
+                OutputStream os = exchange.getResponseBody();
+                os.write(response);
+                os.close();
+
+            } catch (Exception e) {
+
+                String error = "Internal Server Error";
+
+                exchange.sendResponseHeaders(500, error.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(error.getBytes());
+                os.close();
+
+            }
 
         });
 
