@@ -14,7 +14,21 @@ public class DemoAppTest {
         );
 
     }
+    @Test
+    public void testStartupMessageNotNull() {
 
+        assertNotNull(DemoApp.getStartupMessage());
+
+    }
+
+    @Test
+    public void testStartupMessageContainsWord() {
+
+        String message = DemoApp.getStartupMessage();
+
+        assertTrue(message.contains("DevOps"));
+
+    }
     @Test
     public void testLoadHtml() throws Exception {
 
