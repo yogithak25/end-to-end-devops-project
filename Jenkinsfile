@@ -71,5 +71,26 @@ pipeline {
                 }
             }
         }
+        stage('Update Kubernetes Manifest') {
+
+            steps {
+
+                sh '''
+                git clone https://github.com/yogithak25/devops-project-k8s-manifests.git
+                cd devops-project-k8s-manifests
+
+                sed -i "s|image:.*|image: yogithak/devops-project-app:${BUILD_NUMBER}|g" deployment.yaml
+
+                git config user.email "luckychowdary333@gmail.com"
+                git config user.name "jenkins"
+
+                git commit -am "Update image version ${BUILD_NUMBER}"
+
+                git push
+                '''
+
+            }
+
+        }
     }
 }
