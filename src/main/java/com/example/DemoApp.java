@@ -16,6 +16,9 @@ public class DemoApp {
     public static final String STARTUP_MESSAGE =
             "End-to-End DevOps CI/CD Pipeline Deployment Successful";
 
+    public static String getStartupMessage() {
+        return STARTUP_MESSAGE;
+    }
     public static String getHtmlResponse() {
         return "<h1>End-to-End DevOps CI/CD Pipeline Deployment Successful</h1>";
     }
