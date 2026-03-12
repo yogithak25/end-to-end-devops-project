@@ -13,4 +13,11 @@ public class DemoAppTest {
                 DemoApp.getStartupMessage()
         );
     }
+    @Test
+    public void testHtmlResponse() {
+
+        String html = DemoApp.getHtmlResponse();
+
+        assertTrue(html.contains("DevOps"));
+    }
 }
