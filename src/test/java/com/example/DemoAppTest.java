@@ -17,13 +17,14 @@ public class DemoAppTest {
     }
 
     @Test
-    public void testLoadHtml() throws Exception {
+    public void testGenerateHtml() {
+        String html = DemoApp.generateHtml();
+        assertTrue(html.contains("DevOps"));
+    }
 
-        byte[] html = DemoApp.loadHtml();
-
-        assertNotNull(html);
-        assertTrue(html.length > 0);
-
+    @Test
+    public void testGenerateHtmlNotNull() {
+        assertNotNull(DemoApp.generateHtml());
     }
 
 }
