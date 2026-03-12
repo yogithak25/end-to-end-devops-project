@@ -82,6 +82,7 @@ pipeline {
                 )]) {
 
                     sh '''
+                    rm -rf devops-project-k8s-manifests
                     git clone https://$GIT_USER:$GIT_PASS@github.com/yogithak25/devops-project-k8s-manifests.git
                     cd devops-project-k8s-manifests
 
