@@ -19,6 +19,9 @@ public class DemoApp {
     public static String getStartupMessage() {
         return STARTUP_MESSAGE;
     }
+    public static String generateHtml() {
+        return "<html><h1>" + STARTUP_MESSAGE + "</h1></html>";
+    }
 
     public static byte[] loadHtml() throws Exception {
 
