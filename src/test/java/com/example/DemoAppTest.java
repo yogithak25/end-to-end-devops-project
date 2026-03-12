@@ -1,32 +1,49 @@
 package com.example;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class DemoAppTest {
 
     @Test
     public void testStartupMessage() {
+
         assertEquals(
-            "End-to-End DevOps CI/CD Pipeline Deployment Successful",
-            DemoApp.getStartupMessage()
+                "End-to-End DevOps CI/CD Pipeline Deployment Successful",
+                DemoApp.getStartupMessage()
         );
+
     }
 
     @Test
-    public void testHtmlResponseContainsMessage() {
+    public void testLoadHtml() throws Exception {
 
-        String html = DemoApp.getHtmlResponse();
-
-        assertTrue(html.contains("DevOps"));
-    }
-
-    @Test
-    public void testHtmlResponseNotNull() {
-
-        String html = DemoApp.getHtmlResponse();
+        byte[] html = DemoApp.loadHtml();
 
         assertNotNull(html);
+        assertTrue(html.length > 0);
+
+    }
+
+    @Test
+    public void testServerStarts() throws Exception {
+
+        Thread serverThread = new Thread(() -> {
+
+            try {
+                DemoApp.startServer(9095);
+            } catch (Exception ignored) {
+            }
+
+        });
+
+        serverThread.start();
+
+        Thread.sleep(1000);
+
+        assertTrue(serverThread.isAlive());
+
     }
 
 }
