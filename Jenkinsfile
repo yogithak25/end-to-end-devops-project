@@ -45,5 +45,31 @@ pipeline {
                 sh 'mvn deploy'
             }
         }
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t yogithak/devops-project-app:${BUID_NUMBER} ."
+            }
+        }
+        stage('Trivy Security Scan') {
+            steps {
+                sh "trivy image yogithak/devops-project-app:${BUID_NUMBER}"
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-cred',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+
+                    sh '''
+                    docker login -u $USER -p $PASS
+                    docker push yogithak/devops-project-app:${BUILD_NUMBER}
+                    '''
+
+                }
+            }
+        }
     }
 }
