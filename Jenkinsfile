@@ -85,7 +85,6 @@ pipeline {
                     rm -rf devops-project-k8s-manifests
                     git clone https://$GIT_USER:$GIT_PASS@github.com/yogithak25/devops-project-k8s-manifests.git
                     cd devops-project-k8s-manifests
-
                     sed -i "s|image:.*|image: yogithak/devops-project-app:${BUILD_NUMBER}|g" deployment.yaml
 
                     git config user.email "yogithak25@gmail.com"
