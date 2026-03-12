@@ -47,12 +47,12 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh "docker build -t yogithak/devops-project-app:${BUID_NUMBER} ."
+                sh "docker build -t yogithak/devops-project-app:${BUILD_NUMBER} ."
             }
         }
         stage('Trivy Security Scan') {
             steps {
-                sh "trivy image yogithak/devops-project-app:${BUID_NUMBER}"
+                sh "trivy image yogithak/devops-project-app:${BUILD_NUMBER}"
             }
         }
         stage('Docker Push') {
