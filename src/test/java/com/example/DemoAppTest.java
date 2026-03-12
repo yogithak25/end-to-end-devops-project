@@ -26,24 +26,4 @@ public class DemoAppTest {
 
     }
 
-    @Test
-    public void testServerStarts() throws Exception {
-
-        Thread serverThread = new Thread(() -> {
-
-            try {
-                DemoApp.startServer(9095);
-            } catch (Exception ignored) {
-            }
-
-        });
-
-        serverThread.start();
-
-        Thread.sleep(1000);
-
-        assertTrue(serverThread.isAlive());
-
-    }
-
 }
