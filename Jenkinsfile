@@ -24,8 +24,7 @@ pipeline {
                     mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=end-to-end-devops-project \
                     -Dsonar.login=$SONAR_TOKEN \
-                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-                    -Dsonar.coverage.exclusions=**/config/**,**/model/**,**/repository/**
+                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
             }
