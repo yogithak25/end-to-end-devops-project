@@ -14,16 +14,17 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean test'
             }
         }
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
-                    mvn sonar:sonar \
+                    mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=end-to-end-devops-project \
-                    -Dsonar.login=$SONAR_TOKEN
+                    -Dsonar.login=$SONAR_TOKEN \
+                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
             }
