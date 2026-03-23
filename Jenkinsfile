@@ -22,7 +22,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                     mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=end-to-end-devops-project \
+                    -Dsonar.projectKey=end-to-end-devops-automation-project \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
