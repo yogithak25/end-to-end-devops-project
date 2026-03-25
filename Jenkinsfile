@@ -22,7 +22,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                     mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=end-to-end-devops-automation-project \
+                    -Dsonar.projectKey=java-devops-project \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
@@ -48,12 +48,12 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh "docker build -t yogithak/devops-automation-project-app:${BUILD_NUMBER} ."
+                sh "docker build -t yogithak/java-devops-automation-project:${BUILD_NUMBER} ."
             }
         }
         stage('Trivy Security Scan') {
             steps {
-                sh "trivy image yogithak/devops-automation-project-app:${BUILD_NUMBER}"
+                sh "trivy image yogithak/java-devops-automation-project:${BUILD_NUMBER}"
             }
         }
         stage('Docker Push') {
@@ -66,7 +66,7 @@ pipeline {
 
                     sh '''
                     docker login -u $USER -p $PASS
-                    docker push yogithak/devops-automation-project-app:${BUILD_NUMBER}
+                    docker push yogithak/java-devops-automation-project:${BUILD_NUMBER}
                     '''
 
                 }
@@ -86,7 +86,7 @@ pipeline {
                     rm -rf devops-project-k8s-manifests
                     git clone https://$GIT_USER:$GIT_PASS@github.com/yogithak25/devops-project-k8s-manifests.git
                     cd devops-project-k8s-manifests
-                    sed -i "s|image:.*|image: yogithak/devops-automation-project-app:${BUILD_NUMBER}|g" deployment.yaml
+                    sed -i "s|image:.*|image: yogithak/java-devops-automation-project:${BUILD_NUMBER}|g" deployment.yaml
 
                     git config user.email "yogithak25@gmail.com"
                     git config user.name "yogithak25"
