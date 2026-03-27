@@ -97,7 +97,6 @@ pipeline {
                     git push
                     '''
                 }
-
             }
         }
     }
