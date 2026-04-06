@@ -1,28 +1,41 @@
 pipeline {
     agent any
-    tools {
-        maven 'maven-3'
-    }
-    
+
     environment {
+        IMAGE_NAME = "yogithak/java-devops-automation-project"
+        IMAGE_TAG = "${BUILD_NUMBER}"
         SONAR_TOKEN = credentials('sonar-token')
     }
+
     stages {
-        stage('Compile') {
+
+        // -----------------------------
+        // BUILD + TEST (MAVEN - DOCKER)
+        // -----------------------------
+        stage('Build & Test') {
             steps {
-                sh 'mvn clean compile'
+                sh '''
+                docker run --rm \
+                -v $PWD:/app \
+                -w /app \
+                maven:3.9.9-eclipse-temurin-17 \
+                mvn clean verify
+                '''
             }
         }
-        stage('Unit Tests') {
-            steps {
-                sh 'mvn clean test'
-            }
-        }
+
+        // -----------------------------
+        // SONARQUBE SCAN
+        // -----------------------------
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
-                    mvn clean verify sonar:sonar \
+                    docker run --rm \
+                    -v $PWD:/app \
+                    -w /app \
+                    maven:3.9.9-eclipse-temurin-17 \
+                    mvn sonar:sonar \
                     -Dsonar.projectKey=java-devops-project \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
@@ -30,6 +43,10 @@ pipeline {
                 }
             }
         }
+
+        // -----------------------------
+        // QUALITY GATE
+        // -----------------------------
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
@@ -37,26 +54,51 @@ pipeline {
                 }
             }
         }
-        stage('Package Artifact') {
+
+        // -----------------------------
+        // PACKAGE + DEPLOY TO NEXUS
+        // -----------------------------
+        stage('Package & Deploy to Nexus') {
             steps {
-                sh 'mvn clean package'
+                sh '''
+                docker run --rm \
+                -v $PWD:/app \
+                -w /app \
+                maven:3.9.9-eclipse-temurin-17 \
+                mvn clean deploy -DskipTests
+                '''
             }
         }
-        stage('Upload Artifact to Nexus') {
-            steps {
-                sh 'mvn deploy'
-            }
-        }
+
+        // -----------------------------
+        // DOCKER BUILD
+        // -----------------------------
         stage('Docker Build') {
             steps {
-                sh "docker build -t yogithak/java-devops-automation-project:${BUILD_NUMBER} ."
+                sh '''
+                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                '''
             }
         }
+
+        // -----------------------------
+        // TRIVY SECURITY SCAN
+        // -----------------------------
         stage('Trivy Security Scan') {
             steps {
-                sh "trivy image yogithak/java-devops-automation-project:${BUILD_NUMBER}"
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                aquasec/trivy:0.50.0 image \
+                --exit-code 1 \
+                $IMAGE_NAME:$IMAGE_TAG
+                '''
             }
         }
+
+        // -----------------------------
+        // DOCKER PUSH
+        // -----------------------------
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(
@@ -66,17 +108,18 @@ pipeline {
                 )]) {
 
                     sh '''
-                    docker login -u $USER -p $PASS
-                    docker push yogithak/java-devops-automation-project:${BUILD_NUMBER}
+                    echo $PASS | docker login -u $USER --password-stdin
+                    docker push $IMAGE_NAME:$IMAGE_TAG
                     '''
-
                 }
             }
         }
+
+        // -----------------------------
+        // UPDATE K8s MANIFEST (GITOPS)
+        // -----------------------------
         stage('Update Kubernetes Manifest Repo') {
-
             steps {
-
                 withCredentials([usernamePassword(
                     credentialsId: 'github-cred',
                     usernameVariable: 'GIT_USER',
@@ -85,20 +128,36 @@ pipeline {
 
                     sh '''
                     rm -rf devops-project-k8s-manifests
+
                     git clone https://$GIT_USER:$GIT_PASS@github.com/yogithak25/devops-project-k8s-manifests.git
+
                     cd devops-project-k8s-manifests
-                    sed -i "s|image:.*|image: yogithak/java-devops-automation-project:${BUILD_NUMBER}|g" deployment.yaml
+
+                    sed -i "s|image:.*|image: $IMAGE_NAME:$IMAGE_TAG|g" deployment.yaml
 
                     git config user.email "yogithak25@gmail.com"
                     git config user.name "yogithak25"
 
                     git add deployment.yaml
-                    git commit -m "Update image version ${BUILD_NUMBER}"
+
+                    git commit -m "Update image $IMAGE_TAG" || echo "No changes"
 
                     git push
                     '''
                 }
             }
+        }
+    }
+
+    // -----------------------------
+    // POST ACTIONS
+    // -----------------------------
+    post {
+        success {
+            echo "✅ Pipeline completed successfully"
+        }
+        failure {
+            echo "❌ Pipeline failed"
         }
     }
 }
