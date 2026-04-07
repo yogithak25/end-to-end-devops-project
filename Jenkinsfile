@@ -35,8 +35,9 @@ pipeline {
                     -v /home/ubuntu/jenkins_home/workspace/java-devops-pipeline:/app \
                     -w /app \
                     maven:3.9.9-eclipse-temurin-17 \
-                    mvn sonar:sonar \
+                    mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=java-devops-project \
+                    -Dsonar.host.url=http://34.219.55.177:9000 \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
