@@ -37,7 +37,7 @@ pipeline {
                     maven:3.9.9-eclipse-temurin-17 \
                     mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=java-devops-project \
-                    -Dsonar.host.url=http://34.219.55.177:9000 \
+                    -Dsonar.host.url=$SONAR_HOST_URL \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
