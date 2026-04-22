@@ -32,7 +32,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                     docker run --rm \
-                    -v /var/jenkins_home/workspace/java-devops-pipeline:/app \
+                    -v /var/lib/docker/volumes/jenkins_home/_data/workspace/java-devops-pipeline:/app \
                     -w /app \
                     maven:3.9.9-eclipse-temurin-17 \
                     mvn clean verify sonar:sonar \
@@ -63,8 +63,8 @@ pipeline {
             steps {
                 sh '''
                 docker run --rm \
-                -v /var/jenkins_home/workspace/java-devops-pipeline:/app \
-                -v /var/jenkins_home/.m2:/root/.m2 \
+                -v /var/lib/docker/volumes/jenkins_home/_data/workspace/java-devops-pipeline:/app \
+                -v /var/lib/docker/volumes/jenkins_home/.m2:/root/.m2 \
                 -w /app \
                 maven:3.9.9-eclipse-temurin-17 \
                 mvn clean deploy
