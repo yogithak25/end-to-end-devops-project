@@ -16,8 +16,7 @@ pipeline {
             steps {
                 sh '''
                 docker run --rm \
-                -u root \
-                -v "$WORKSPACE":/app \
+                -v /var/lib/docker/volumes/jenkins_home/_data/workspace/java-devops-pipeline:/app \
                 -w /app \
                 maven:3.9.9-eclipse-temurin-17 \
                 mvn clean verify
