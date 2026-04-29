@@ -9,7 +9,7 @@ public class DemoAppTest {
     public void testStartupMessage() {
 
         assertEquals(
-                "End-to-End DevOps CI/CD Pipeline Deployment Successful",
+                "End-to-End DevOps Automation CI/CD Pipeline Deployment Successful",
                 DemoApp.getStartupMessage()
         );
 
@@ -25,7 +25,7 @@ public class DemoAppTest {
 
         String html = DemoApp.generateHtml();
 
-        assertTrue(html.contains("End-to-End DevOps CI/CD Pipeline Deployment Successful"));
+        assertTrue(html.contains("End-to-End DevOps Automation CI/CD Pipeline Deployment Successful"));
     }
 
     @Test
