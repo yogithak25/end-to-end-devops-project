@@ -14,7 +14,7 @@ public class DemoApp {
             LoggerFactory.getLogger(DemoApp.class);
 
     public static final String STARTUP_MESSAGE =
-            "End-to-End DevOps CI/CD Pipeline Deployment Successful";
+            "End-to-End DevOps Automation CI/CD Pipeline Deployment Successful";
 
     public static String getStartupMessage() {
         return STARTUP_MESSAGE;
