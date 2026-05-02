@@ -50,7 +50,7 @@
 
      <repository>
          <id>nexus</id>
-         <url>http://50.112.24.31:8081/repository/maven-releases-custom/</url>
+         <url>http://44.250.50.166:8081/repository/maven-releases-custom/</url>
      </repository>
 
  </distributionManagement>
